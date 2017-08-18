@@ -23,8 +23,12 @@ function getForWindows(): Promise<string> {
     return exec(`${epath} -s system-uuid`);
 }
 
-function getForLinux(): Promise<string> {
-    return exec('hal-get-property --udi /org/freedesktop/Hal/devices/computer --key system.hardware.uuid');
+async function getForLinux(): Promise<string> {
+    let token = await exec('hal-get-property --udi /org/freedesktop/Hal/devices/computer --key system.hardware.uuid');
+    if (!token) {
+        token = await exec('dmidecode -s system-uui');
+    }
+    return token;
 }
 
 function getForMac(): Promise<string> {
