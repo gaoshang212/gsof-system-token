@@ -28,7 +28,7 @@ function getForLinux(): Promise<string> {
 }
 
 function getForMac(): Promise<string> {
-    return exec("ioreg -rd1 -c IOPlatformExpertDevice | awk '/IOPlatformUUID/ { split($0, line, \"\\\"\"); printf(\"%s\n\", line[4]); }'")
+    return exec("ioreg -rd1 -c IOPlatformExpertDevice | awk '/IOPlatformUUID/ { split($0, line, \"\\\"\"); printf(\"%s\\n\", line[4]); }'")
 }
 
 async function getCustomToken(): Promise<string> {
