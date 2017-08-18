@@ -1,7 +1,7 @@
-import { getDeviceToken } from '../';
+import { getSystemToken } from '../';
 
 async function test() {
-    let token = await getDeviceToken();
+    let token = await getSystemToken();
     console.log(token);
 }
 

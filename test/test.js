@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const _1 = require("../");
 function test() {
     return __awaiter(this, void 0, void 0, function* () {
-        let token = yield _1.getDeviceToken();
+        let token = yield _1.getSystemToken();
         console.log(token);
     });
 }
