@@ -1,6 +1,6 @@
 {
   "name": "gsof-system-token",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "get system token for nodejs, use in windows, mac or linux",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
