@@ -39,7 +39,7 @@ async function getCustomToken(): Promise<string> {
         return Promise.resolve(_token);
     }
 
-    let tp = path.join(os.homedir(), '.token', 'token');
+    let tp = path.join(os.homedir(), '.token', 'customtoken');
 
     let token;
     let exists = await file.exists(tp);
@@ -66,6 +66,25 @@ function createToken() {
     return createMd5(pid.toString() + timestamp.toString());
 }
 
+async function saveToken(token: string) {
+    let tp = path.join(os.homedir(), '.token', 'token');
+    let dir = path.dirname(tp);
+    const exists = await file.exists(dir)
+    if (!exists) {
+        await directory.createDirectory(dir);
+    }
+    await file.writeAllText(tp, token);
+}
+
+async function getToken() {
+    let tp = path.join(os.homedir(), '.token', 'token');
+    let exists = await file.exists(tp);
+    if (!exists) {
+        return null;
+    }
+    return await file.readAllText(tp);
+}
+
 function createMd5(data: string) {
     const md5 = crypto.createHash('md5');
     return md5.update(data).digest('hex');
@@ -74,6 +93,11 @@ function createMd5(data: string) {
 async function getSystemToken(): Promise<string> {
     let token = process.env["SYSTEMTOKEN"];
     if (typeof token === "string") {
+        return token;
+    }
+
+    token = await getToken();
+    if (token && typeof token === 'string') {
         return token;
     }
 
@@ -94,7 +118,12 @@ async function getSystemToken(): Promise<string> {
         token = await getCustomToken();
     }
 
-    return createMd5(token);
+    let result = createMd5(token);
+    if (result) {
+        await saveToken(result);
+    }
+
+    return result;
 }
 
 export { getSystemToken };
