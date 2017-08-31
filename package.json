@@ -1,6 +1,6 @@
 {
   "name": "gsof-system-token",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "get system token for nodejs, use in windows, mac or linux",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "appdata-path": "^0.1.2",
-    "gsof-simple-file-async": "^0.1.5"
+    "gsof-simple-file-async": "^0.1.5",
+    "uuid": "^3.1.0"
   }
 }

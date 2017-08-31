@@ -5,6 +5,7 @@ import * as ap from 'appdata-path';
 import * as fs from 'fs';
 import { file, directory } from 'gsof-simple-file-async';
 import * as crypto from 'crypto';
+import { v4 } from "uuid";
 
 var _token;
 
@@ -61,9 +62,9 @@ async function getCustomToken(): Promise<string> {
 }
 
 function createToken() {
-    let timestamp = Date.now();
-    let pid = process.pid;
-    return createMd5(pid.toString() + timestamp.toString());
+    // let timestamp = Date.now();
+    // let pid = process.pid;
+    return v4();//createMd5(pid.toString() + timestamp.toString());
 }
 
 async function saveToken(token: string) {
@@ -118,12 +119,10 @@ async function getSystemToken(): Promise<string> {
         token = await getCustomToken();
     }
 
-    let result = createMd5(token);
-    if (result) {
-        await saveToken(result);
-    }
+    //let result = createMd5(token);
+    await saveToken(token);
 
-    return result;
+    return token;
 }
 
 export { getSystemToken };
