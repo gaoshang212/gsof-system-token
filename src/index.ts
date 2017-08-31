@@ -12,7 +12,7 @@ var _token;
 async function exec(command: string): Promise<string> {
     let promise = new Promise<string>((resolve, rejecte) => {
         let token = child_process.exec(command, (err, stdout, stderr) => {
-            resolve(stdout);
+            resolve((stdout || '').trim());
         });
     });
     return promise;
