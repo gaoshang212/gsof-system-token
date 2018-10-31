@@ -99,7 +99,7 @@ async function getSystemToken(): Promise<string> {
 
     token = await getToken();
     if (token && typeof token === 'string') {
-        return token;
+        return token && token.length > 36 ? token.substr(0, 36) : token;
     }
 
     switch (os.platform()) {
