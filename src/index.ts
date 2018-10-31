@@ -119,6 +119,10 @@ async function getSystemToken(): Promise<string> {
         token = await getCustomToken();
     }
 
+    if (token && token.length > 36) {
+        token = token.substr(0, 36);
+    }
+
     //let result = createMd5(token);
     await saveToken(token);
 
