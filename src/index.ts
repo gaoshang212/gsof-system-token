@@ -1,11 +1,11 @@
 import * as child_process from 'child_process';
 import * as path from 'path';
 import * as os from 'os';
-import * as ap from 'appdata-path';
-import * as fs from 'fs';
 import { file, directory } from 'gsof-simple-file-async';
 import * as crypto from 'crypto';
 import { v4 } from "uuid";
+
+const zero = "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000";
 
 var _token;
 
@@ -26,7 +26,7 @@ function getForWindows(): Promise<string> {
 async function getForLinux(): Promise<string> {
     let token = await exec('hal-get-property --udi /org/freedesktop/Hal/devices/computer --key system.hardware.uuid');
     if (!token) {
-        token = await exec('dmidecode -s system-uui');
+        token = await exec('dmidecode -s system-uuid');
     }
     return token;
 }
@@ -98,7 +98,7 @@ async function getSystemToken(): Promise<string> {
     }
 
     token = await getToken();
-    if (token && typeof token === 'string') {
+    if (token && typeof token === 'string' && token !== zero) {
         return token && token.length > 36 ? token.substr(0, 36) : token;
     }
 
@@ -115,7 +115,7 @@ async function getSystemToken(): Promise<string> {
     }
 
     //00000000-0000-0000-0000-000000000000
-    if (!token || token === '00000000-0000-0000-0000-000000000000' || token.length < 32) {
+    if (!token || token === '00000000-0000-0000-0000-000000000000' || token === zero || token.length < 32) {
         token = await getCustomToken();
     }
 
