@@ -84,7 +84,14 @@ async function getToken() {
     if (!exists) {
         return null;
     }
-    return await file.readAllText(tp);
+    let token = "";
+    try {
+        token = await file.readAllText(tp);
+    } catch (err) {
+        console.log(err);
+    }
+
+    return token;
 }
 
 function createMd5(data: string) {
