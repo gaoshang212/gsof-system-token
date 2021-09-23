@@ -7,6 +7,7 @@ import { v4 } from "uuid";
 
 const zero = "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000";
 
+var _ctoken;
 var _token;
 
 async function exec(command: string): Promise<string> {
@@ -36,8 +37,8 @@ function getForMac(): Promise<string> {
 }
 
 async function getCustomToken(): Promise<string> {
-    if (_token) {
-        return Promise.resolve(_token);
+    if (_ctoken) {
+        return Promise.resolve(_ctoken);
     }
 
     let tp = path.join(os.homedir(), '.token', 'customtoken');
@@ -45,17 +46,17 @@ async function getCustomToken(): Promise<string> {
     let token;
     let exists = await file.exists(tp);
     if (exists) {
-        _token = token = await file.readAllText(tp);
+        _ctoken = token = await file.readAllText(tp);
     }
 
-    if (!token) {
-        _token = token = createToken();
+    if (!token || token === zero) {
+        _ctoken = token = createToken();
 
         if (!exists) {
             const dir = path.dirname(tp)
             await directory.createDirectory(dir);
         }
-        await file.writeAllText(tp, _token);
+        await file.writeAllText(tp, _ctoken);
     }
 
     return token;
@@ -91,14 +92,22 @@ function createMd5(data: string) {
     return md5.update(data).digest('hex');
 }
 
+function checkToken(token) {
+    return token && typeof token === 'string' && token !== zero
+}
+
 async function getSystemToken(): Promise<string> {
     let token = process.env["SYSTEMTOKEN"];
     if (typeof token === "string") {
         return token;
     }
 
+    if (checkToken(_token)) {
+        return _token;
+    }
+
     token = await getToken();
-    if (token && typeof token === 'string' && token !== zero) {
+    if (checkToken(token)) {
         return token && token.length > 36 ? token.substr(0, 36) : token;
     }
 
@@ -123,8 +132,9 @@ async function getSystemToken(): Promise<string> {
         token = token.substr(0, 36);
     }
 
+    _token = token;
     //let result = createMd5(token);
-    await saveToken(token);
+    saveToken(token);
 
     return token;
 }
