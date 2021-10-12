@@ -19,7 +19,7 @@
     "@types/node": "^8.0.22"
   },
   "dependencies": {
-    "gsof-simple-file-async": "^0.2.7",
+    "gsof-simple-file-async": "^0.2.9",
     "uuid": "^3.1.0"
   }
 }
