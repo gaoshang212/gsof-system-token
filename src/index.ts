@@ -12,7 +12,16 @@ var _token;
 
 async function exec(command: string): Promise<string> {
     let promise = new Promise<string>((resolve, rejecte) => {
-        let token = child_process.exec(command, (err, stdout, stderr) => {
+        child_process.exec(command, (err, stdout, stderr) => {
+            resolve((stdout || '').trim());
+        });
+    });
+    return promise;
+}
+
+async function execFile(path: string, ...args: string[]): Promise<string> {
+    let promise = new Promise<string>((resolve, rejecte) => {
+        child_process.execFile(path, args, { encoding: 'utf8' }, (err, stdout: string, stderr) => {
             resolve((stdout || '').trim());
         });
     });
@@ -21,7 +30,7 @@ async function exec(command: string): Promise<string> {
 
 function getForWindows(): Promise<string> {
     let epath = path.join(__dirname, 'dmidecode.exe');
-    return exec(`${epath} -s system-uuid`);
+    return execFile(epath, "-s", "system-uuid");
 }
 
 async function getForLinux(): Promise<string> {
@@ -51,12 +60,15 @@ async function getCustomToken(): Promise<string> {
 
     if (!token || token === zero) {
         _ctoken = token = createToken();
-
-        if (!exists) {
-            const dir = path.dirname(tp)
-            await directory.createDirectory(dir);
+        try {
+            if (!exists) {
+                const dir = path.dirname(tp)
+                await directory.createDirectory(dir);
+            }
+            file.writeAllText(tp, _ctoken);
+        } catch (err) {
+            console.log(err);
         }
-        await file.writeAllText(tp, _ctoken);
     }
 
     return token;
@@ -72,10 +84,14 @@ async function saveToken(token: string) {
     let tp = path.join(os.homedir(), '.token', 'token');
     let dir = path.dirname(tp);
     const exists = await file.exists(dir)
-    if (!exists) {
-        await directory.createDirectory(dir);
+    try {
+        if (!exists) {
+            await directory.createDirectory(dir);
+        }
+        await file.writeAllText(tp, token);
+    } catch (err) {
+        console.log(err);
     }
-    await file.writeAllText(tp, token);
 }
 
 async function getToken() {
