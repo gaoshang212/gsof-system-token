@@ -1,7 +1,7 @@
 {
     "name": "gsof-system-token",
-    "version": "0.2.5",
-    "description": "get system token in nodejs or electron",
+    "version": "0.2.6",
+    "description": "get the a system hardware unique uuid",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "repository": {
@@ -15,7 +15,8 @@
         "device",
         "token",
         "system",
-        "unique"
+        "unique",
+        "uuid"
     ],
     "author": "gaoshang",
     "license": "MIT",
